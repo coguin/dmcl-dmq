@@ -5,6 +5,10 @@
 zoo_cli.h 为头文件
 zoo_cli.cpp为源文件
 zoo_test.cpp 为测试文件
+编译方法如下：以编译那个test文档为例
+首先将cpp文件生成.o文件
 g++ -c zoo_cli.cpp -o zoo_cli.o -fpermissive
-g++ -o test zoo_test.cpp ./zoo_cli.o /usr/local/lib/libzookeeper_mt.so  
+之后生成目标程序
+注意：编译加上libzookeeper_mt.so 多线程库
+g++ -o test zoo_test.cpp ./zoo_cli.o /usr/local/lib/libzookeeper_mt.so 
 
