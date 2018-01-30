@@ -123,6 +123,10 @@ void Zoo_cli::register_broker(char * br_name){
 		cout<<"Register broker success"<<endl;
 	}
 }
+/************Get Brokers*****
+ * 获取当前系统所有在线的Broker
+ * 结果放在返回的vector中
+ * */
 vector<string> Zoo_cli::get_brokers(){
 	vector<string> brokers;
 	struct String_vector strings;
@@ -135,12 +139,17 @@ vector<string> Zoo_cli::get_brokers(){
 		int32_t i=0;
 		for (;i<strings.count;++i){
 			string s(strings.data[i]);
-			cout<<s<<endl;
+//			cout<<s<<endl;
 			brokers.push_back(s);
 		}
 	}
 	return brokers;
 }
+/***********Register Topic*******
+ * 即在Topics节点下创建指定的topic节点
+ * 用于保存当前系统所有topic信息
+ * 生产者创建topic时调用一次
+ * ****/
 void Zoo_cli::register_topic(char *topic){
 	char p[50]="/topics/";
 	strcat(p,topic);
@@ -150,6 +159,36 @@ void Zoo_cli::register_topic(char *topic){
 		std::cout<<"Register topic error!";
 	}
 }
+/*******Delete Topic
+ * 删除指定的topic
+ * 如topic下有consumer,级联删除
+ * ********************/
+void Zoo_cli::delete_topic(char *topic){
+	char p[50]="/topics/";
+	strcat(p,topic);
+	vector<string> result;
+	result = this->get_topic_cosumers(topic);
+	if(!result.empty()){
+		cout<<"!empty"<<endl;
+		for(vector<string>::iterator siter = result.begin();
+								siter!=result.end();siter++){
+			string s = *siter;
+			char* c =new char[s.length()];
+			strcpy(c,s.c_str());
+//			cout<<"c "<<c<<endl;
+			this->delete_topic_consumer(c,topic);
+			delete c;
+	   	}
+	}
+	int rc = zoo_delete(zh,p, -1);
+	if(rc){
+		std::cout<<"Delete topic error!"<<endl;
+	}
+}
+/***********Get Topic
+ * 获取当前所有topic
+ * 结果放在返回的vector类型中
+ * *************/
 vector<string> Zoo_cli::get_topics(){
 	vector<string> topics;
 	struct String_vector strings;
@@ -162,12 +201,16 @@ vector<string> Zoo_cli::get_topics(){
 		int32_t i=0;
 		for (;i<strings.count;++i){
 			string s(strings.data[i]);
-			cout<<s<<endl;
+//			cout<<s<<endl;
 			topics.push_back(s);
 		}
 	}
 	return topics;
 }
+/***************Get Topic consumers
+ * 获取指定topic下的所有consumers
+ * 结果放在返回的vector类型中
+ * **************/
 vector<string> Zoo_cli::get_topic_cosumers(char *topic){
 	vector<string> consumers;
 	char p[50]="/topics/";
@@ -181,11 +224,25 @@ vector<string> Zoo_cli::get_topic_cosumers(char *topic){
 		int32_t i=0;
 		for (;i<strings.count;++i){
 			string s(strings.data[i]);
-			cout<<s<<endl;
+//			cout<<s<<endl;
 			consumers.push_back(s);
 		}
 	}
 	return consumers;
+}
+/***************Delete Topic consumer
+ * 删除指定topic下的consumer节点
+ * **************/
+void Zoo_cli::delete_topic_consumer(char * consumer,char * topic){
+	vector<string> consumers;
+	char p[50]="/topics/";
+	strcat(p,topic);
+	strcat(p,"/");
+	strcat(p,consumer);
+	int rc = zoo_delete(zh,p,-1);
+	if(rc){
+		std::cout<<"Delete topic consumer error!";
+	}
 }
 /*************consumer***************/
 void Zoo_cli::register_consumer(char * con_name){
@@ -202,6 +259,15 @@ void Zoo_cli::register_consumer(char * con_name){
 //		std::cout<<"consumer_id :"<<consumer_id;
 //	}
 }
+void Zoo_cli::delete_consumer(char *consumer){
+	char p[50]="/consumers/";
+	strcat(p,consumer);
+	int rc = zoo_delete(zh,p,-1);
+	if(rc){
+		std::cout<<"Delete consumer error!";
+	}
+}
+
 vector<string> Zoo_cli::get_consumers(){
 	vector<string> consumers;
 	struct String_vector strings;
@@ -213,12 +279,16 @@ vector<string> Zoo_cli::get_consumers(){
 		int32_t i=0;
 		for (;i<strings.count;++i){
 			string s(strings.data[i]);
-			cout<<s<<endl;
+//			cout<<s<<endl;
 			consumers.push_back(s);
 		}
 	}
 	return consumers;
 }
+/***************Sub
+ * 在指定topic节点下创建consumer节点
+ * 即某个consumer订阅某个topic
+ * ************/
 void Zoo_cli::sub_(char * consumer,char* topic){
 	char p[50]="/topics/";
 	strcat(p,topic);
@@ -230,5 +300,6 @@ void Zoo_cli::sub_(char * consumer,char* topic){
 			std::cout<<"sub_ error! rc = "<<rc<<endl;
 		}
 }
+
 
 
