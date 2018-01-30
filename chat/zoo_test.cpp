@@ -19,17 +19,21 @@ int main(int argc, const char *argv[])
    // zoo = new Zoo_cli();
     //zoo->init();
 //    zoo.init();
+//   以下为创建topic
 //    zoo.register_topic("1234");
 //    zoo.register_topic("1235");
 //    zoo.register_topic("1236");
+//   以下为创建消费者
 //    zoo.register_consumer("1234");
 //    zoo.register_consumer("1235");
 //    zoo.register_consumer("1236");
+//   以下为创建broker
 //    zoo.register_broker("1234");
 //    zoo.register_broker("1235");
 //    sleep(5);
 //    zoo.register_consumer("1237");
 //    result =zoo.get_topics();
+
 //    zoo.sub_("9","1235");
 //    zoo.sub_("4","1235");
     result=zoo.get_topic_cosumers("1235");
