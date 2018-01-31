@@ -26,8 +26,9 @@ public:
 /***********broker***********************/
 	int register_broker(char *br_name);//初始化建立此brokerd的临时节点
 	vector<string> get_brokers();//获取所有brokers列表
-	int register_topic(char *topic);//注册添加一个topic
-	int delete_topic(char *topic);
+	int register_topic(char *topic_name,char*data );//注册添加一个topic,
+	string get_topic_data(char * topic_name);//获取topic节点上的数据
+	int delete_topic(char *topic_name);
 	vector<string> get_topics();//获取所有topic列表
 	vector<string> get_topic_cosumers(char *topic);//获取某个topic下所有订阅者
 

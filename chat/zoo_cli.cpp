@@ -154,15 +154,31 @@ vector<string> Zoo_cli::get_brokers(){
  * 用于保存当前系统所有topic信息
  * 生产者创建topic时调用一次
  * ****/
-int Zoo_cli::register_topic(char *topic){
+int Zoo_cli::register_topic(char *topic,char *data){
 	char p[50]="/topics/";
 	strcat(p,topic);
-	int rc = zoo_create(zh,p,"subscribe",9,&ZOO_OPEN_ACL_UNSAFE,0,
+	string s(data);
+	int rc = zoo_create(zh,p,data,s.length(),&ZOO_OPEN_ACL_UNSAFE,0,
 			                     0, 0);
 	if(rc){
 		std::cout<<"Register topic error!";
 	}
 	return rc;
+}
+string Zoo_cli::get_topic_data(char* topic){
+	char p[50]="/topics/";
+	strcat(p,topic);
+	char buffer[64];
+	int bufferlen1=sizeof(buffer);
+	int flag=zoo_get(zh,p,0,
+	                      buffer,&bufferlen1,NULL);
+//	cout<<"buffer "<<buffer<<endl;
+
+	if(flag!=ZOK){
+		cout<<"get topic data error "<<flag<<endl;
+	}
+	string s(buffer);
+	return s;
 }
 /*******Delete Topic
  * 删除指定的topic

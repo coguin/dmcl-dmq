@@ -23,10 +23,14 @@ int main(int argc, const char *argv[])
 //    zoo.init();
   //当初话完成后，就可以用zoo对象进行相关操作，包括创建topic，删除topic，
 // 创建broker（不用删除，broker掉线自动删除），消费者订阅topic，获取订阅topic下的所有消费者等
-//   创建topic 相关函数
-//    zoo.register_topic("1234"); //创建名为“1234”的topic
-//    zoo.register_topic("1235");//创建名为“1235”的topic
-//    zoo.register_topic("1236");//创建名为“1236”的topic
+//   创建topic 相关函数 data为想要在topic存储的数据
+//    zoo.register_topic("1234","data1"); //创建名为“1234”的topic
+//    zoo.register_topic("1235","data2");//创建名为“1235”的topic
+//    zoo.register_topic("1236","data3");//创建名为“1236”的topic
+	//想要获取topic的数据,接口如下 传入的参数为topic的名字
+	//返回为string类型的topic上的数据 即topic存储的broker的地址
+	string s =zoo.get_topic_data("1235");
+	cout<<"s ="<<s<<endl;
 //   以下为创建消费者 即再consumers目录下创建一个节点，表示此节点是消费者
 //    zoo.register_consumer("1234");//创建名为“1234”的consumer
 //    zoo.register_consumer("1235");//创建名为“1235”的consumer
