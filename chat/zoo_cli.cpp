@@ -326,6 +326,20 @@ int Zoo_cli::sub_(char * consumer,char* topic){
 		}
 	return rc;
 }
-
+int Zoo_cli::create_node(char* path,char* data){
+	int rc = zoo_create(zh,path,data,strlen(data),&ZOO_OPEN_ACL_UNSAFE,0,
+				                     0, 0);
+	if(rc){
+		cout<<"Create Node error!";
+	}
+	return rc;
+}
+string Zoo_cli::get_node_data(char* path){
+	char buffer[64];
+	int bufferlen1=sizeof(buffer);
+	int flag=zoo_get(zh,path,0, buffer,&bufferlen1,NULL);
+	string s(buffer);
+	return s;
+}
 
 

@@ -39,6 +39,9 @@ public:
 	vector<string> get_consumers();//获取所有订阅者信息
 	int sub_(char * consumer,char* topic);	//consumer订阅topic
 	int delete_topic_consumer(char * consumer,char* topic);
+	//一下为通用的创建节点,获取节点,
+	int create_node(char* path,char* data);//path为创建节点的路径,data为节点上要存储的信息
+	string get_node_data(char* path);
 public:
 	char* IP="127.0.0.1:2181";
 	char* broker_id="1234";
