@@ -9,6 +9,8 @@ using boost::asio::ip::tcp;
 
 typedef std::deque<chat_message> chat_message_queue;
 
+std::string broker_ip("");
+
 class chat_client
 {
 public:
@@ -102,6 +104,9 @@ private:
                                 {
                                     if(!ec)
                                     {
+                                        std::string ip(read_msg_.body());
+                                        broker_ip = ip;
+                                        
                                         std::cout.write(read_msg_.body(), read_msg_.body_length());
                                         std::cout << "\n";
                                         do_read_header();
@@ -159,33 +164,32 @@ int main(int argc, char* argv[])
         }
 
         std::string topic(argv[2]);
+        {
+           //TODO 添加和路由通信，找到topic对应的server ip，
 
-        //TODO 添加和路由通信，找到topic对应的server ip，
+            boost::asio::io_service io_service;
 
+            tcp::resolver resolver(io_service);
+
+            //argv[1] 为server IP， 20000是端口号
+            auto endpoint_iterator = resolver.resolve({argv[1], "20000"});
+            chat_client c(io_service, endpoint_iterator, topic);
+
+            io_service.run();
+            
+        }
+        
         boost::asio::io_service io_service;
+        //TODO argv[2]是topic  需要在此处加上和路由通信，找到serverIP，然后传递到下面，替换argv[1]
 
         tcp::resolver resolver(io_service);
+        //auto endpoint_iterator = resolver.resolve({argv[1], argv[2]});
+        std::cout << "broker_ip:" << broker_ip << "\n";
+        auto endpoint_iterator = resolver.resolve({ broker_ip, "30000"});
+        chat_client c(io_service, endpoint_iterator);
 
-        //argv[1] 为server IP， 20000是端口号
-        auto endpoint_iterator = resolver.resolve({argv[1], "30000"});
-        chat_client c(io_service, endpoint_iterator, topic);
+        std::thread t([&io_service](){io_service.run();});
 
-        io_service.run();
-
-        //std::thread t([&io_service](){io_service.run();});
-
-//        char line[chat_message::max_body_length + 1];
-//        while(std::cin.getline(line, chat_message::max_body_length + 1))
-//        {
-//            chat_message msg;
-//            msg.body_length(std::strlen(line));
-//            std::memcpy(msg.body(), line, msg.body_length());
-//            msg.encode_header();
-//            c.write(msg);
-//        }
-
-        //c.close();
-        //t.join();
     }
     catch(std::exception& e)
     {
